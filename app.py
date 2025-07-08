@@ -1,11 +1,24 @@
 from fastapi import FastAPI, Body
 from fastapi.responses import FileResponse
 from typing import List  # Import List for type hinting
+from pydantic import BaseModel  # Import BaseModel for defining request body structure
 
 from main import Game
 
 game = Game()
 app = FastAPI()
+
+
+# Define Pydantic models for request bodies
+class InsertRequest(BaseModel):
+    row: int
+    col: int
+    value: int
+
+
+class DeleteRequest(BaseModel):
+    row: int
+    col: int
 
 
 @app.get("/")
@@ -30,36 +43,23 @@ async def reset():
 
 
 @app.post("/insert")
-async def insert(row: int, col: int, value: int):
-    # The insert method in main.py already returns True/False
-    return game.insert(row, col, value)
+async def insert(request: InsertRequest):  # Use Pydantic model for request body
+    return game.insert(request.row, request.col, request.value)
 
 
 @app.post("/delete")
-async def delete(row: int, col: int):
-    # The delete method in main.py already returns True/False
-    return game.delete(row, col)
+async def delete(request: DeleteRequest):  # Use Pydantic model for request body
+    return game.delete(request.row, request.col)
 
 
 @app.post("/build")
-async def build(arr: List[List[int]] = Body(...)):  # Explicitly type as List of List of ints
+async def build(arr: List[List[int]] = Body(...)):  # Explicitly type as nested List of ints
     # The build method in main.py already returns True/False
     return game.build(arr)
 
 
 @app.post("/solve")
 async def solve():
-    # When solving, the main.py's solve method prints to console and modifies
-    # the internal board. To send the result back to the UI, we need to
-    # capture the solved board or a message.
-    # If no solution or multiple solutions, main.py prints messages.
-    # We need to adapt this to return a structured response.
-
-    # Create a temporary Game instance or pass the current board to a solver function
-    # to avoid modifying the main game.board prematurely for solution display logic.
-    # However, based on the current main.py, game.solve() already handles
-    # restoring the original board after finding solutions.
-
     game.solve()  # This will update game.board if unique solution, or populate game.solutions
 
     if len(game.solutions) == 1:

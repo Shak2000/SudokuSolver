@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const valueInput = document.getElementById('value-input');
     const insertDigitBtn = document.getElementById('insert-digit-btn');
     const deleteDigitBtn = document.getElementById('delete-digit-btn');
-    const quitBtn = document.getElementById('quit-btn');
 
     let currentBoard = Array(9).fill(0).map(() => Array(9).fill(0));
     let prefilledCells = new Set(); // Stores "row-col" strings for pre-filled cells
@@ -265,21 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayMessage('Solver response unexpected. Check server logs.', true);
             }
         }
-    });
-
-    // 6. Quit (client-side only, as the backend is persistent)
-    quitBtn.addEventListener('click', () => {
-        displayMessage('Exiting Sudoku Solver. Goodbye!', false);
-        // In a web environment, "quit" typically means closing the tab or navigating away.
-        // We can disable buttons or show a final message.
-        newPuzzleBtn.disabled = true;
-        solvePuzzleBtn.disabled = true;
-        buildBoardBtn.disabled = true;
-        insertDigitBtn.disabled = true;
-        deleteDigitBtn.disabled = true;
-        quitBtn.disabled = true;
-        // Optionally, clear the board
-        renderBoard(Array(9).fill(0).map(() => Array(9).fill(0)));
     });
 
     // Initial board render
